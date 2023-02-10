@@ -1,6 +1,5 @@
 from tkinter import *
 import numpy as np
-#import GameOfLife
 
 colour = "red"
 default_colour = "white"
@@ -50,8 +49,8 @@ def start(clicked, grid):
     cell_counter = 0
 
     for button in clicked:
-        locate(button, grid)
-
+        #locate(button, grid)
+        print (button)
         
 
         # if grid[x][y+1] == "x":   #RIGHT
