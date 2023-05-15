@@ -1,36 +1,39 @@
 from tkinter import *
-import numpy as np
 
 colour = "red"
 default_colour = "white"
 
+
 def main():
     root = Tk()
     root.title("John Conway's Game of Life")
-    root.geometry("800x600")
+    root.geometry("700x600")
 
     clicked = []
     # 2D array of all cells
     buttons = []
-    for x in range(1,21):
+    for x in range(1, 21):
         # Array of cells in a row
         row = []
         for y in range(1, 21):
-            b = Button(root, bg=default_colour, activebackground=default_colour, width=2, height=1)
+            b = Button(root, bg=default_colour,
+                       activebackground=default_colour, width=2, height=1)
             b.grid(column=x, row=y)
-            # Creating the callback with "b" as the deafult parameter below 
+            # Creating the callback with "b" as the deafult parameter below
             # "freezes" its value pointing to the button created in each run
             # of the loop
             b["command"] = lambda b=b: click(b, clicked)
             row.append(b)
         # Append each row into the array of all buttons
         buttons.append(row)
-    
-    start_btn = Button(root, text="START", font="Coolvetica", bg="red", fg="white", command=lambda: start(clicked, buttons))
-    start_btn.grid(column=6, row= 25, columnspan=10)
 
-    label = Label(root, text="                                                ")
-    label.grid(column=0, row= 25)
+    start_btn = Button(root, text="START", font="Coolvetica",
+                       bg="red", fg="white", command=lambda: start(clicked, buttons))
+    start_btn.grid(column=6, row=25, columnspan=10)
+
+    label = Label(
+        root, text="                                    ")
+    label.grid(column=0, row=25)
 
     root.mainloop()
 
@@ -45,11 +48,11 @@ def locate(cell, array):
 # The start button has been pressed and the board needs to be updated to
 # the next generation of cells
 def start(clicked, grid):
-    cell_counter = 0
     clicked_cell_pos = []
+    cells_to_click = []
 
     for button in clicked:
-        # Get all cell positions
+        # Get all clicked cell positions
         pos = locate(button, grid)
         clicked_cell_pos.append(pos)
 
@@ -61,36 +64,42 @@ def start(clicked, grid):
             pos = locate(cell, grid)
 
             # check surrounding cells
-            if (pos[0] - 1, pos[1]) in clicked_cell_pos: # Top
+            if (pos[0] - 1, pos[1]) in clicked_cell_pos:  # Top
                 counter += 1
-            if (pos[0] - 1, pos[1] + 1) in clicked_cell_pos: # Top Right
+            if (pos[0] - 1, pos[1] + 1) in clicked_cell_pos:  # Top Right
                 counter += 1
-            if (pos[0], pos[1] + 1) in clicked_cell_pos: # Right
+            if (pos[0], pos[1] + 1) in clicked_cell_pos:  # Right
                 counter += 1
-            if (pos[0] + 1, pos[1] + 1) in clicked_cell_pos: # Bottom Right
+            if (pos[0] + 1, pos[1] + 1) in clicked_cell_pos:  # Bottom Right
                 counter += 1
-            if (pos[0] + 1, pos[1]) in clicked_cell_pos: # Bottom
+            if (pos[0] + 1, pos[1]) in clicked_cell_pos:  # Bottom
                 counter += 1
-            if (pos[0] + 1, pos[1] - 1) in clicked_cell_pos: # Bottom Left
+            if (pos[0] + 1, pos[1] - 1) in clicked_cell_pos:  # Bottom Left
                 counter += 1
-            if (pos[0], pos[1] - 1) in clicked_cell_pos: # Left
+            if (pos[0], pos[1] - 1) in clicked_cell_pos:  # Left
                 counter += 1
-            if (pos[0] - 1, pos[1] - 1) in clicked_cell_pos: # Top Left
+            if (pos[0] - 1, pos[1] - 1) in clicked_cell_pos:  # Top Left
                 counter += 1
-        
-            # If cell has been clicked and has 1 or >=4 surrounding clicked cells then 
+
+            # If cell has been clicked and has 1 or >=4 surrounding clicked cells then
             # that cell must be unclicked
-            if (counter == 1 or counter >= 4) and (pos in clicked_cell_pos):
-                cell["bg"] = default_colour
-                cell["activebackground"] = default_colour
+            if (counter <= 1 or counter >= 4) and (pos in clicked_cell_pos):
+                cells_to_click.append(cell)
+
+            # If cell has 3 surrounding clicked cells then then that cell is born
+            if (counter == 3) and (pos not in clicked_cell_pos):
+                cells_to_click.append(cell)
+
+    update_cells(cells_to_click, clicked)
 
 
+# Update the cells that need to be turned on and off
+def update_cells(cells_to_click, clicked):
+    for cell in cells_to_click:
+        click(cell, clicked)
 
-    return cell_counter
 
-
-
-
+# If a button is clicked change the colour of the button
 def click(button, clicked):
     if button in clicked:
         button["bg"] = default_colour
@@ -100,5 +109,6 @@ def click(button, clicked):
         button["bg"] = colour
         button["activebackground"] = colour
         clicked.append(button)
+
 
 main()
