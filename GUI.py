@@ -35,41 +35,57 @@ def main():
     root.mainloop()
 
 
-def locate(cell, array): 
-    for row in array:
-        for element in row:
-            if cell == array[row][element]:
-                return "Hello"
-
-    return "Hello World"
+# Returns the index of a button from a 2d array
+def locate(cell, array):
+    for i, row in enumerate(array):
+        if cell in row:
+            return (row.index(cell), i)
 
 
-
+# The start button has been pressed and the board needs to be updated to
+# the next generation of cells
 def start(clicked, grid):
     cell_counter = 0
+    clicked_cell_pos = []
 
     for button in clicked:
-        #locate(button, grid)
-        print (button)
-        
+        # Get all cell positions
+        pos = locate(button, grid)
+        clicked_cell_pos.append(pos)
 
-        # if grid[x][y+1] == "x":   #RIGHT
-        #     cell_counter += 1
-        # if grid[x+1][y+1] == "x": #DOWN RIGHT
-        #     cell_counter += 1
-        # if grid[x][y-1] == "x":   #LEFT
-        #     cell_counter += 1
-        # if grid[x+1][y] == "x":   #DOWN
-        #     cell_counter += 1
-        # if grid[x+1][y-1] == "x": #DOWN LEFT
-        #     cell_counter += 1
-        # if grid[x-1][y] == "x":   #UP
-        #     cell_counter += 1
-        # if grid[x-1][y+1] == "x": #UP RIGHT
-        #     cell_counter += 1
-        # if grid[x-1][y-1] == "x": #UP LEFT
-        #     cell_counter += 1
-            
+    # Check population around each button on the grid
+    for row in grid:
+        for cell in row:
+            counter = 0
+            # get button location
+            pos = locate(cell, grid)
+
+            # check surrounding cells
+            if (pos[0] - 1, pos[1]) in clicked_cell_pos: # Top
+                counter += 1
+            if (pos[0] - 1, pos[1] + 1) in clicked_cell_pos: # Top Right
+                counter += 1
+            if (pos[0], pos[1] + 1) in clicked_cell_pos: # Right
+                counter += 1
+            if (pos[0] + 1, pos[1] + 1) in clicked_cell_pos: # Bottom Right
+                counter += 1
+            if (pos[0] + 1, pos[1]) in clicked_cell_pos: # Bottom
+                counter += 1
+            if (pos[0] + 1, pos[1] - 1) in clicked_cell_pos: # Bottom Left
+                counter += 1
+            if (pos[0], pos[1] - 1) in clicked_cell_pos: # Left
+                counter += 1
+            if (pos[0] - 1, pos[1] - 1) in clicked_cell_pos: # Top Left
+                counter += 1
+        
+            # If cell has been clicked and has 1 or >=4 surrounding clicked cells then 
+            # that cell must be unclicked
+            if (counter == 1 or counter >= 4) and (pos in clicked_cell_pos):
+                cell["bg"] = default_colour
+                cell["activebackground"] = default_colour
+
+
+
     return cell_counter
 
 
